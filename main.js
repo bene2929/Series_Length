@@ -2,9 +2,10 @@
  * Created by Benedikt on 01/05/2017.
  */
 var shows = [];
-function Show(episodes, show) {
+function Show(episodes, show, runtime) {
     this.show = show;
     this.episodes = episodes;
+    this.runtime = runtime;
 }
 $("body").ready(function () {
     $("button").button();
@@ -40,14 +41,19 @@ $("body").ready(function () {
                 if (!contained) {
                     var url = "http://api.tvmaze.com/shows/" + id;
 
-                    $.getJSON(url, null, function (data_show) {
-                        url += "/episodes"
-                        $.getJSON(url, null, function (data_episode) {
-                            console.log(data_show);
 
-                            console.log(data_episode);
-                            shows.push(new Show(data_episode, data_show));
-                            updateShowList();
+                    $.getJSON(url, null, function (data_show) {
+
+                        $.getJSON("http://www.omdbapi.com/?i=" + data_show.externals.imdb, null, function (data_imdb) {
+                            console.log(data_imdb);
+                            url += "/episodes";
+                            $.getJSON(url, null, function (data_episode) {
+                                console.log(data_show);
+
+                                console.log(data_episode);
+                                shows.push(new Show(data_episode, data_show, data_imdb.Runtime));
+                                updateShowList();
+                            });
                         });
                     });
                 }
@@ -70,14 +76,12 @@ function updateShowList() {
 function recalculateNumber() {
     var total_min = 0;
     for (var is = 0; is < shows.length; is++) {
-        for (var ie = 0; ie < shows[is].episodes.length; ie++) {
-            total_min += shows[is].episodes[ie].runtime;
-        }
+        total_min += shows[is].episodes.length * (parseInt(shows[is].runtime.split(" ")[0]));
     }
     var hrs = Math.floor(total_min / 60);
     var min = total_min % 60;
-    if(min<10){
-        min="0"+min;
+    if (min < 10) {
+        min = "0" + min;
     }
     $("#result").html(hrs + ":" + min);
 }
