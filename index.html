@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WastedOnSeries</title>
+    <script src="/jquery_ui/external/jquery/jquery.js" type="text/javascript"></script>
+    <script src="/jquery_ui/jquery-ui.js" type="text/javascript"></script>
+    <link href="/jquery_ui/jquery-ui.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial;
+            height:100%;
+        }
+        .show_search{
+            height:5%;
+        }
+        .add_show_link{
+            cursor: pointer;
+            font-style: italic;
+        }
+        .bottom_top {
+            position: fixed;
+            bottom: 1%;
+            right: 1%;
+            z-index: 99;
+        }
+    </style>
+
+    <script type="text/javascript" src="main.js"></script>
+</head>
+<body>
+<h1>WastedOnSeries</h1>
+<input type="text" id="search" class="jq_textfield"/>
+<div id="search_res"></div>
+<h2>Your series:</h2>
+<div id="added"></div>
+<h2>You spent this much time on shows:</h2>
+<h1 id="result"></h1>
+<div class="bottom_top">
+    Created by: <a href="https://twitter.com/bene2929">@bene2929</a> Data provided by: <a href="http://www.tvmaze.com">TVMaze.com</a>
+</div>
+</body>
+</html>
