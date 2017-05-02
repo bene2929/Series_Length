@@ -71,7 +71,7 @@ function updateShowList() {
             var id = obj.target.id.split("~")[1];
             console.log(id);
             if (shows[i_sh].show.id == parseInt(id)) {
-               shows.splice(i_sh, 1);
+                shows.splice(i_sh, 1);
             }
         }
         updateShowList();
@@ -81,18 +81,27 @@ function updateShowList() {
 function recalculateNumber() {
     var total_min = 0;
     for (var is = 0; is < shows.length; is++) {
-        total_min += shows[is].episodes.length * (parseInt(shows[is].runtime.split(" ")[0]));
+        if (shows[is].runtime === "string"&&shows[is].runtime!="N/A") {
+
+            total_min += shows[is].episodes.length * (parseInt(shows[is].runtime.split(" ")[0]));
+        } else {
+            console.log("No IMDB runtime- using TVmaze...");
+            console.log(shows[is]);
+            for (var ie = 0; ie < shows[is].episodes.length; ie++) {
+                total_min +=shows[is].episodes[ie].runtime;
+            }
+        }
     }
     var hrs = Math.floor(total_min / 60);
     var min = total_min % 60;
     if (min < 10) {
         min = "0" + min;
     }
-    $("#result").html(hrs + " h " + min+" min ");
-    var days=Math.floor(hrs/24);
-    hrs=hrs%24;
-    if(days>0){
-        $("#result_small").html(days+ " days "+hrs + " h " + min+" min ");
+    $("#result").html(hrs + " h " + min + " min ");
+    var days = Math.floor(hrs / 24);
+    hrs = hrs % 24;
+    if (days > 0) {
+        $("#result_small").html(days + " days " + hrs + " h " + min + " min ");
     }
 }
 function getYearFromDate(date) {
