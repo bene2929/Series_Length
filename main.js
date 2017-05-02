@@ -17,23 +17,21 @@ $("body").ready(function () {
         var url = "http://api.tvmaze.com/search/shows?q=" + encodeURI(input);
         console.log(url);
         $.getJSON(url, null, function (data) {
-            console.log(data);
             var html = "";
             for (var i = 0; i < data.length; i++) {
                 html += "<div class=\"show_search\">";
                 if (data[i].show.image) {
                     html += "<img  height='20px' src='" + data[i].show.image.medium + "'>";
                 }
-                html += data[i].show.name + "(" + getYearFromDate(data[i].show.premiered) + ")  <a id='add_show~" + data[i].show.id + "' class='add_show_link' >Add</a></div>\n";
+                html += data[i].show.name + "(" + getYearFromDate(data[i].show.premiered) + ")  <a id='add_show~" + data[i].show.id + "' class='add_show_link add_show_handler' >Add</a></div>\n";
             }
             $("#search_res").html(html);
-            $(".add_show_link").click(function (obj) {
-                console.log(obj.target.id);
+            $(".add_show_handler").click(function (obj) {
                 var id = obj.target.id.split("~")[1];
 
                 var contained = false;
-                for (var i_sh = 0; i < shows.length; i++) {
-                    if (shows[i][0].id == parseInt(id)) {
+                for (var i_sh = 0; i_sh < shows.length; i_sh++) {
+                    if (shows[i_sh].show.id == parseInt(id)) {
                         contained = true;
                         break;
                     }
@@ -45,12 +43,8 @@ $("body").ready(function () {
                     $.getJSON(url, null, function (data_show) {
 
                         $.getJSON("http://www.omdbapi.com/?i=" + data_show.externals.imdb, null, function (data_imdb) {
-                            console.log(data_imdb);
                             url += "/episodes";
                             $.getJSON(url, null, function (data_episode) {
-                                console.log(data_show);
-
-                                console.log(data_episode);
                                 shows.push(new Show(data_episode, data_show, data_imdb.Runtime));
                                 updateShowList();
                             });
@@ -60,6 +54,7 @@ $("body").ready(function () {
             });
         });
     });
+    updateShowList();
 });
 function updateShowList() {
     var html = "";
@@ -68,9 +63,19 @@ function updateShowList() {
         if (shows[i].show.image) {
             html += "<img  class='display_img' height='20px' src='" + shows[i].show.image.medium + "'>";
         }
-        html += shows[i].show.name + "(" + getYearFromDate(shows[i].show.premiered) + ")</div>\n";
+        html += shows[i].show.name + "(" + getYearFromDate(shows[i].show.premiered) + ") <a id='remove_show~" + shows[i].show.id + "' class='add_show_link remove_show_handler' >Remove</a></div>\n";
     }
     $("#added").html(html);
+    $(".remove_show_handler").click(function (obj) {
+        for (var i_sh = 0; i_sh < shows.length; i_sh++) {
+            var id = obj.target.id.split("~")[1];
+            console.log(id);
+            if (shows[i_sh].show.id == parseInt(id)) {
+               shows.splice(i_sh, 1);
+            }
+        }
+        updateShowList();
+    });
     recalculateNumber();
 }
 function recalculateNumber() {
@@ -83,7 +88,12 @@ function recalculateNumber() {
     if (min < 10) {
         min = "0" + min;
     }
-    $("#result").html(hrs + ":" + min);
+    $("#result").html(hrs + " h " + min+" min ");
+    var days=Math.floor(hrs/24);
+    hrs=hrs%24;
+    if(days>0){
+        $("#result_small").html(days+ " days "+hrs + " h " + min+" min ");
+    }
 }
 function getYearFromDate(date) {
     if (date) {
