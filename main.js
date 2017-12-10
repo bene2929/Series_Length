@@ -42,7 +42,7 @@ $("body").ready(function () {
 
                     $.getJSON(url, null, function (data_show) {
 
-                        $.getJSON("http://www.omdbapi.com/?i=" + data_show.externals.imdb, null, function (data_imdb) {
+                        $.getJSON("http://www.omdbapi.com/?i=" + data_show.externals.imdb+"&apikey=eb4989ae", null, function (data_imdb) {
                             url += "/episodes";
                             $.getJSON(url, null, function (data_episode) {
                                 shows.push(new Show(data_episode, data_show, data_imdb.Runtime));
